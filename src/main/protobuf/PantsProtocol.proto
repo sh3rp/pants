@@ -1,0 +1,75 @@
+
+message Pants {
+   enum Type {
+      LOGIN = 0;
+      VERSION = 1;
+      JOIN = 2;
+      MSG = 3;
+      PRIVMSG = 4;
+      PING = 5;
+      PONG = 6;
+      CONTROL = 7;
+   }
+   required Type type = 1;
+   required bytes data = 2;
+}
+
+message Login {
+   enum Type {
+      REQUEST = 0;
+      SUCCESS = 1;
+      FAIL = 2;
+   }
+   requred Type type = 1;
+   optional string username = 2;
+   optional string password = 3;
+   optional int64 userId = 4;
+}
+
+message Version {
+   enum Type {
+      REQUEST = 0;
+      RESPONSE = 1;
+   }
+   required Type type = 1;
+   optional int32 major = 2;
+   optional int32 minor = 3;
+   optional int32 patch = 4; 
+}
+
+message Join {
+   enum Type {
+      REQUEST = 0;
+      RESPONSE = 1;
+   }
+   optional int64 user = 1;
+   optional string channel = 2;
+   optional int64 channelId = 3;
+}
+
+message Msg {
+   optional int64 user = 1;
+   optional int64 channel = 2;
+   optional string message = 3;   
+}
+
+message PrivMsg {
+   optional int64 userFrom = 1;
+   optional int64 userTo = 2;
+   optional string message = 3;
+}
+
+message Ping {
+   optional Version version = 1;
+}
+
+message Pong {
+   optional Version version = 1;
+}
+
+message Control {
+   enum Type {
+      STATUS = 0;
+   }
+   required Type type = 1;
+}
