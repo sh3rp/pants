@@ -1,3 +1,6 @@
+package org.kndl.pants;
+
+option java_package = "org.kndl.pants";
 
 message Pants {
    enum Type {
@@ -20,21 +23,16 @@ message Login {
       SUCCESS = 1;
       FAIL = 2;
    }
-   requred Type type = 1;
+   required Type type = 1;
    optional string username = 2;
    optional string password = 3;
    optional int64 userId = 4;
 }
 
 message Version {
-   enum Type {
-      REQUEST = 0;
-      RESPONSE = 1;
-   }
-   required Type type = 1;
-   optional int32 major = 2;
-   optional int32 minor = 3;
-   optional int32 patch = 4; 
+   optional int32 major = 1;
+   optional int32 minor = 2;
+   optional int32 patch = 3;
 }
 
 message Join {
