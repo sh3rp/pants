@@ -1,3 +1,6 @@
+import java.io.FileReader
+import java.util.Properties
+
 import com.google.protobuf.ByteString
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.socket.SocketChannel
@@ -8,13 +11,20 @@ import io.netty.handler.codec.protobuf.{ProtobufEncoder, ProtobufVarint32LengthF
 import io.netty.handler.logging.{LoggingHandler, LogLevel}
 import io.netty.handler.ssl.{SslContextBuilder, SslContext}
 import io.netty.handler.ssl.util.SelfSignedCertificate
+import org.apache.commons.configuration.{PropertiesConfiguration, Configuration}
 import org.kndl.pants.PantsProtocol
 import org.kndl.pants.PantsProtocol.{Ping, Pants}
 import org.slf4j.{Logger, LoggerFactory}
 
+import scala.collection.immutable.HashMap
+
 object Server extends App {
 
   val LOGGER: Logger = LoggerFactory.getLogger("Server")
+
+  val vma = 1
+  val vmi = 0
+  val vpa = 0
 
   val SSL: Boolean = true
   val PORT: Int = 8463
@@ -68,8 +78,17 @@ class PantsHandler extends SimpleChannelInboundHandler[PantsProtocol.Pants] {
 
   val LOGGER: Logger = LoggerFactory.getLogger(classOf[PantsHandler])
 
+  var connections:Set[ChannelHandlerContext] = Set()
+
+  override def handlerAdded(ctx: ChannelHandlerContext) {
+    connections = connections + ctx
+  }
+
+  override def handlerRemoved(ctx: ChannelHandlerContext) {
+    connections = connections - ctx
+  }
+
   override def channelRead0(ctx: ChannelHandlerContext, msg: Pants): Unit = {
-    LOGGER.debug("Reading from channel")
     try {
       handle(ctx, msg.getType, msg.getData)
     } catch {
@@ -84,9 +103,25 @@ class PantsHandler extends SimpleChannelInboundHandler[PantsProtocol.Pants] {
   def handle(ctx: ChannelHandlerContext, pType: PantsProtocol.Pants.Type, data: ByteString) = {
     pType match {
       case PantsProtocol.Pants.Type.PING =>
-        LOGGER.info("Received PING, sending PONG")
+        LOGGER.info("PING <- {}",ctx.name())
         ctx.writeAndFlush(newPong)
+        LOGGER.info("PONG -> {}",ctx.name())
+      case PantsProtocol.Pants.Type.MSG =>
+        val inMsg: PantsProtocol.Msg = PantsProtocol.Msg.parseFrom(data)
+        LOGGER.info("Got message: {}",inMsg.getMessage)
+        LOGGER.info("Sending to: {}",connections)
+        connections.foreach { ctx =>
+          ctx.writeAndFlush(newMsg(inMsg.getMessage))
+        }
     }
+  }
+
+  def newMsg(msg: String): PantsProtocol.Pants = {
+    PantsProtocol.Pants.newBuilder()
+      .setType(PantsProtocol.Pants.Type.MSG)
+      .setData(PantsProtocol.Msg.newBuilder()
+        .setMessage(msg).build().toByteString)
+      .build()
   }
 
   def newPong: PantsProtocol.Pants = {
@@ -101,7 +136,11 @@ class PantsHandler extends SimpleChannelInboundHandler[PantsProtocol.Pants] {
   }
 
   def version: PantsProtocol.Version = {
-    PantsProtocol.Version.newBuilder().setMajor(1).setMinor(0).setPatch(0).build()
+    PantsProtocol.Version.newBuilder()
+      .setMajor(Server.vma)
+      .setMinor(Server.vmi)
+      .setPatch(Server.vpa)
+      .build()
   }
 }
 
