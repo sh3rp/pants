@@ -17,6 +17,8 @@ import org.kndl.pants.PantsProtocol.{Ping, Pants}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.immutable.HashMap
+import scala.collection.parallel.mutable
+import scala.collection.mutable.Map
 
 object Server extends App {
 
@@ -35,7 +37,7 @@ object Server extends App {
   } else {
     sslCtx = null;
   }
-
+  val connections: Map[Int,Channel] = Map()
   val bossGroup: EventLoopGroup = new NioEventLoopGroup(1)
   val workerGroup: EventLoopGroup = new NioEventLoopGroup()
   try {
@@ -43,7 +45,7 @@ object Server extends App {
     b.group(bossGroup, workerGroup)
       .channel(classOf[NioServerSocketChannel])
       .handler(new LoggingHandler(LogLevel.INFO))
-      .childHandler(new ServerInitializer(sslCtx))
+      .childHandler(new ServerInitializer(sslCtx,connections))
 
     b.bind(PORT).sync().channel().closeFuture().sync()
   } finally {
@@ -52,7 +54,7 @@ object Server extends App {
   }
 }
 
-class ServerInitializer(ctx: SslContext) extends ChannelInitializer[SocketChannel] {
+class ServerInitializer(ctx: SslContext, connections: Map[Int,Channel]) extends ChannelInitializer[SocketChannel] {
   override def initChannel(c: SocketChannel): Unit = {
     val pipeline: ChannelPipeline = c.pipeline()
     pipeline.addLast(ctx.newHandler(c.alloc()))
@@ -69,23 +71,20 @@ class ServerInitializer(ctx: SslContext) extends ChannelInitializer[SocketChanne
 
     // object
 
-    pipeline.addLast(new PantsHandler())
+    pipeline.addLast(new PantsHandler(connections))
 
   }
 }
 
-class PantsHandler extends SimpleChannelInboundHandler[PantsProtocol.Pants] {
+class PantsHandler(connections: Map[Int,Channel]) extends SimpleChannelInboundHandler[PantsProtocol.Pants] {
 
   val LOGGER: Logger = LoggerFactory.getLogger(classOf[PantsHandler])
 
-  var connections:Set[ChannelHandlerContext] = Set()
-
-  override def handlerAdded(ctx: ChannelHandlerContext) {
-    connections = connections + ctx
+  override def handlerAdded(ctx: ChannelHandlerContext): Unit = {
+    connections.put(ctx.channel.hashCode(),ctx.channel)
   }
 
   override def handlerRemoved(ctx: ChannelHandlerContext) {
-    connections = connections - ctx
   }
 
   override def channelRead0(ctx: ChannelHandlerContext, msg: Pants): Unit = {
@@ -110,8 +109,8 @@ class PantsHandler extends SimpleChannelInboundHandler[PantsProtocol.Pants] {
         val inMsg: PantsProtocol.Msg = PantsProtocol.Msg.parseFrom(data)
         LOGGER.info("Got message: {}",inMsg.getMessage)
         LOGGER.info("Sending to: {}",connections)
-        connections.foreach { ctx =>
-          ctx.writeAndFlush(newMsg(inMsg.getMessage))
+        connections.foreach { conn =>
+          conn._2.writeAndFlush(newMsg(inMsg.getMessage))
         }
     }
   }
