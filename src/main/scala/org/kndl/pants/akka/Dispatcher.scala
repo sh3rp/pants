@@ -5,6 +5,7 @@ import com.google.protobuf.ByteString
 import org.kndl.pants.PantsProtocol.{Pants, Ping}
 import org.kndl.pants.{PantsProtocol, Server}
 import org.slf4j.{Logger, LoggerFactory}
+import scala.collection.immutable.Map
 
 
 class Dispatcher extends Actor {
@@ -14,7 +15,7 @@ class Dispatcher extends Actor {
   var clients: Map[Int,ActorRef] = Map()
 
   var names: Map[ActorRef,String] = Map()
-  var channels: Map[String,Set[ActorRef]] = Map()
+  var channels: Map[Int,Set[ActorRef]] = Map()
 
   override def receive = {
     case in: IN =>
@@ -25,8 +26,27 @@ class Dispatcher extends Actor {
   def handleMessage(sender: ActorRef, msg: Pants) = {
     msg.getType match {
       case Pants.Type.MSG =>
+        val message: PantsProtocol.Msg = PantsProtocol.Msg.parseFrom(msg.getData)
+        LOGGER.info("MSG to {} : {}",message.getChannel,message.getMessage)
+        val id: Int = message.getChannel
+        channels.contains(id) match {
+          case true =>
+            channels(id).foreach { client =>
+              client ! OUT(msg)
+            }
+        }
       case Pants.Type.PRIVMSG =>
       case Pants.Type.JOIN =>
+        val join: PantsProtocol.Join = PantsProtocol.Join.parseFrom(msg.getData)
+        LOGGER.info("JOIN channel {}",join.getChannel)
+        val id: Int = join.getChannel.hashCode
+        channels.contains(id) match {
+          case true =>
+            val members: Set[ActorRef] = channels(id)
+            channels = channels ++ Map(id -> (members ++ Set(sender)))
+          case false =>
+            channels = channels ++ Map(id -> Set(sender))
+        }
     }
   }
 

@@ -42,12 +42,12 @@ message Join {
    }
    optional int64 user = 1;
    optional string channel = 2;
-   optional int64 channelId = 3;
+   optional int32 channelId = 3;
 }
 
 message Msg {
    optional int64 user = 1;
-   optional int64 channel = 2;
+   optional int32 channel = 2;
    optional string message = 3;   
 }
 

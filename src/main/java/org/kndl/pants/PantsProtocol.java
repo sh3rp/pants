@@ -2125,13 +2125,13 @@ public final class PantsProtocol {
         getChannelBytes();
 
     /**
-     * <code>optional int64 channelId = 3;</code>
+     * <code>optional int32 channelId = 3;</code>
      */
     boolean hasChannelId();
     /**
-     * <code>optional int64 channelId = 3;</code>
+     * <code>optional int32 channelId = 3;</code>
      */
-    long getChannelId();
+    int getChannelId();
   }
   /**
    * Protobuf type {@code org.kndl.pants.Join}
@@ -2198,7 +2198,7 @@ public final class PantsProtocol {
             }
             case 24: {
               bitField0_ |= 0x00000004;
-              channelId_ = input.readInt64();
+              channelId_ = input.readInt32();
               break;
             }
           }
@@ -2381,24 +2381,24 @@ public final class PantsProtocol {
     }
 
     public static final int CHANNELID_FIELD_NUMBER = 3;
-    private long channelId_;
+    private int channelId_;
     /**
-     * <code>optional int64 channelId = 3;</code>
+     * <code>optional int32 channelId = 3;</code>
      */
     public boolean hasChannelId() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional int64 channelId = 3;</code>
+     * <code>optional int32 channelId = 3;</code>
      */
-    public long getChannelId() {
+    public int getChannelId() {
       return channelId_;
     }
 
     private void initFields() {
       user_ = 0L;
       channel_ = "";
-      channelId_ = 0L;
+      channelId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -2420,7 +2420,7 @@ public final class PantsProtocol {
         output.writeBytes(2, getChannelBytes());
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeInt64(3, channelId_);
+        output.writeInt32(3, channelId_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -2441,7 +2441,7 @@ public final class PantsProtocol {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(3, channelId_);
+          .computeInt32Size(3, channelId_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -2564,7 +2564,7 @@ public final class PantsProtocol {
         bitField0_ = (bitField0_ & ~0x00000001);
         channel_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
-        channelId_ = 0L;
+        channelId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
@@ -2768,34 +2768,34 @@ public final class PantsProtocol {
         return this;
       }
 
-      private long channelId_ ;
+      private int channelId_ ;
       /**
-       * <code>optional int64 channelId = 3;</code>
+       * <code>optional int32 channelId = 3;</code>
        */
       public boolean hasChannelId() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>optional int64 channelId = 3;</code>
+       * <code>optional int32 channelId = 3;</code>
        */
-      public long getChannelId() {
+      public int getChannelId() {
         return channelId_;
       }
       /**
-       * <code>optional int64 channelId = 3;</code>
+       * <code>optional int32 channelId = 3;</code>
        */
-      public Builder setChannelId(long value) {
+      public Builder setChannelId(int value) {
         bitField0_ |= 0x00000004;
         channelId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 channelId = 3;</code>
+       * <code>optional int32 channelId = 3;</code>
        */
       public Builder clearChannelId() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        channelId_ = 0L;
+        channelId_ = 0;
         onChanged();
         return this;
       }
@@ -2825,13 +2825,13 @@ public final class PantsProtocol {
     long getUser();
 
     /**
-     * <code>optional int64 channel = 2;</code>
+     * <code>optional int32 channel = 2;</code>
      */
     boolean hasChannel();
     /**
-     * <code>optional int64 channel = 2;</code>
+     * <code>optional int32 channel = 2;</code>
      */
-    long getChannel();
+    int getChannel();
 
     /**
      * <code>optional string message = 3;</code>
@@ -2906,7 +2906,7 @@ public final class PantsProtocol {
             }
             case 16: {
               bitField0_ |= 0x00000002;
-              channel_ = input.readInt64();
+              channel_ = input.readInt32();
               break;
             }
             case 26: {
@@ -2971,17 +2971,17 @@ public final class PantsProtocol {
     }
 
     public static final int CHANNEL_FIELD_NUMBER = 2;
-    private long channel_;
+    private int channel_;
     /**
-     * <code>optional int64 channel = 2;</code>
+     * <code>optional int32 channel = 2;</code>
      */
     public boolean hasChannel() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int64 channel = 2;</code>
+     * <code>optional int32 channel = 2;</code>
      */
-    public long getChannel() {
+    public int getChannel() {
       return channel_;
     }
 
@@ -3029,7 +3029,7 @@ public final class PantsProtocol {
 
     private void initFields() {
       user_ = 0L;
-      channel_ = 0L;
+      channel_ = 0;
       message_ = "";
     }
     private byte memoizedIsInitialized = -1;
@@ -3049,7 +3049,7 @@ public final class PantsProtocol {
         output.writeInt64(1, user_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt64(2, channel_);
+        output.writeInt32(2, channel_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBytes(3, getMessageBytes());
@@ -3069,7 +3069,7 @@ public final class PantsProtocol {
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, channel_);
+          .computeInt32Size(2, channel_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -3194,7 +3194,7 @@ public final class PantsProtocol {
         super.clear();
         user_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000001);
-        channel_ = 0L;
+        channel_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
         message_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -3324,34 +3324,34 @@ public final class PantsProtocol {
         return this;
       }
 
-      private long channel_ ;
+      private int channel_ ;
       /**
-       * <code>optional int64 channel = 2;</code>
+       * <code>optional int32 channel = 2;</code>
        */
       public boolean hasChannel() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int64 channel = 2;</code>
+       * <code>optional int32 channel = 2;</code>
        */
-      public long getChannel() {
+      public int getChannel() {
         return channel_;
       }
       /**
-       * <code>optional int64 channel = 2;</code>
+       * <code>optional int32 channel = 2;</code>
        */
-      public Builder setChannel(long value) {
+      public Builder setChannel(int value) {
         bitField0_ |= 0x00000002;
         channel_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 channel = 2;</code>
+       * <code>optional int32 channel = 2;</code>
        */
       public Builder clearChannel() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        channel_ = 0L;
+        channel_ = 0;
         onChanged();
         return this;
       }
@@ -5799,9 +5799,9 @@ public final class PantsProtocol {
       "(\003\"*\n\004Type\022\013\n\007REQUEST\020\000\022\013\n\007SUCCESS\020\001\022\010\n\004" +
       "FAIL\020\002\"6\n\007Version\022\r\n\005major\030\001 \001(\005\022\r\n\005mino",
       "r\030\002 \001(\005\022\r\n\005patch\030\003 \001(\005\"[\n\004Join\022\014\n\004user\030\001" +
-      " \001(\003\022\017\n\007channel\030\002 \001(\t\022\021\n\tchannelId\030\003 \001(\003" +
+      " \001(\003\022\017\n\007channel\030\002 \001(\t\022\021\n\tchannelId\030\003 \001(\005" +
       "\"!\n\004Type\022\013\n\007REQUEST\020\000\022\014\n\010RESPONSE\020\001\"5\n\003M" +
-      "sg\022\014\n\004user\030\001 \001(\003\022\017\n\007channel\030\002 \001(\003\022\017\n\007mes" +
+      "sg\022\014\n\004user\030\001 \001(\003\022\017\n\007channel\030\002 \001(\005\022\017\n\007mes" +
       "sage\030\003 \001(\t\"<\n\007PrivMsg\022\020\n\010userFrom\030\001 \001(\003\022" +
       "\016\n\006userTo\030\002 \001(\003\022\017\n\007message\030\003 \001(\t\"C\n\004Ping" +
       "\022(\n\007version\030\001 \001(\0132\027.org.kndl.pants.Versi" +

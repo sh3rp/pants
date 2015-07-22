@@ -39,10 +39,12 @@ object Client extends App {
     for (x <- 1 to 10) {
       handler.sendPing()
     }
+    handler.sendJoin("sherp","test")
     Thread.sleep(5000)
-    handler.sendMsg("Hello!")
+    handler.sendMsg("test","Hello!")
     Thread.sleep(1000)
-    handler.sendMsg("Good morning!")
+    handler.sendMsg("test","Good morning!")
+    Thread.sleep(5000)
   } finally {
     group.shutdownGracefully()
   }

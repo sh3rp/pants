@@ -2,7 +2,7 @@ package org.kndl.pants.netty.client
 
 import io.netty.channel.{ChannelHandlerContext, SimpleChannelInboundHandler}
 import org.kndl.pants.PantsProtocol
-import org.kndl.pants.PantsProtocol.{Msg, Pants, Ping, Pong}
+import org.kndl.pants.PantsProtocol._
 import org.slf4j.{Logger, LoggerFactory}
 
 /**
@@ -21,8 +21,12 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
     ctx.writeAndFlush(ping)
   }
 
-  def sendMsg(message: String) = {
-    ctx.writeAndFlush(msg(message))
+  def sendMsg(channel: String, message: String) = {
+    ctx.writeAndFlush(msg(channel,message))
+  }
+
+  def sendJoin(user: String, channel: String) = {
+    ctx.writeAndFlush(join(user,channel))
   }
 
   override def channelRegistered(ctx: ChannelHandlerContext) = {
@@ -40,7 +44,7 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
           (System.currentTimeMillis() - pong.getTimestamp).toString)
       case PantsProtocol.Pants.Type.MSG =>
         val message: Msg = PantsProtocol.Msg.parseFrom(msg.getData)
-        LOGGER.info("MSG {}",message.getMessage)
+        LOGGER.info("<{}> {}",message.getChannel,message.getMessage)
       case _ =>
     }
   }
@@ -55,10 +59,17 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
       .setData(Ping.newBuilder().setTimestamp(System.currentTimeMillis()).build().toByteString).build()
   }
 
-  def msg(msg: String):Pants = {
+  def join(user: String, channel: String): Pants = {
+    Pants.newBuilder()
+      .setType(Pants.Type.JOIN)
+      .setData(Join.newBuilder().setChannel(channel).build().toByteString)
+      .build()
+  }
+
+  def msg(channel: String, msg: String):Pants = {
     Pants.newBuilder()
       .setType(Pants.Type.MSG)
-      .setData(Msg.newBuilder().setMessage(msg).build().toByteString)
+      .setData(Msg.newBuilder().setChannel(channel.hashCode).setMessage(msg).build().toByteString)
       .build()
   }
 }
