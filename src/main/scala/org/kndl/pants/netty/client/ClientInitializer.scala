@@ -4,7 +4,7 @@ import io.netty.channel.socket.SocketChannel
 import io.netty.channel.{ChannelInitializer, ChannelPipeline}
 import io.netty.handler.codec.protobuf.{ProtobufDecoder, ProtobufEncoder, ProtobufVarint32FrameDecoder, ProtobufVarint32LengthFieldPrepender}
 import io.netty.handler.ssl.SslContext
-import org.kndl.pants.PantsProtocol
+import org.kndl.pants.{Client, PantsProtocol}
 
 /**
  *

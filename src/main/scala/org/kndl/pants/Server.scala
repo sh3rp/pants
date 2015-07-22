@@ -1,28 +1,16 @@
-import java.io.FileReader
-import java.util.Properties
+package org.kndl.pants
 
-import akka.actor._
-import akka.actor.Actor.Receive
-import com.google.protobuf.ByteString
+import _root_.akka.actor.{ActorSystem, Props}
 import io.netty.bootstrap.ServerBootstrap
-import io.netty.channel.socket.SocketChannel
 import io.netty.channel._
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
-import io.netty.handler.codec.protobuf.{ProtobufEncoder, ProtobufVarint32LengthFieldPrepender, ProtobufDecoder, ProtobufVarint32FrameDecoder}
-import io.netty.handler.logging.{LoggingHandler, LogLevel}
-import io.netty.handler.ssl.{SslContextBuilder, SslContext}
+import io.netty.handler.logging.{LogLevel, LoggingHandler}
 import io.netty.handler.ssl.util.SelfSignedCertificate
-import org.apache.commons.configuration.{PropertiesConfiguration, Configuration}
-import org.kndl.pants.PantsProtocol
-import org.kndl.pants.PantsProtocol.{Ping, Pants}
+import io.netty.handler.ssl.{SslContext, SslContextBuilder}
 import org.kndl.pants.akka.Dispatcher
 import org.kndl.pants.netty.server.ServerInitializer
 import org.slf4j.{Logger, LoggerFactory}
-
-import scala.collection.immutable.HashMap
-import scala.collection.parallel.mutable
-import scala.collection.mutable.Map
 
 object Server extends App {
 
@@ -36,7 +24,7 @@ object Server extends App {
   val PORT: Int = 8463
   var sslCtx: SslContext = _
   if (SSL) {
-    val ssc:SelfSignedCertificate = new SelfSignedCertificate()
+    val ssc: SelfSignedCertificate = new SelfSignedCertificate()
     sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build()
   } else {
     sslCtx = null;
@@ -46,7 +34,7 @@ object Server extends App {
   try {
 
     val actorSystem = ActorSystem("pants")
-    val dispatcher = actorSystem.actorOf(Props[Dispatcher],"dispatcher")
+    val dispatcher = actorSystem.actorOf(Props[Dispatcher], "dispatcher")
 
     val b: ServerBootstrap = new ServerBootstrap()
     b.group(bossGroup, workerGroup)

@@ -2,9 +2,8 @@ package org.kndl.pants.akka
 
 import akka.actor.{Actor, ActorRef}
 import com.google.protobuf.ByteString
-import io.netty.channel.Channel
-import org.kndl.pants.PantsProtocol
 import org.kndl.pants.PantsProtocol.{Pants, Ping}
+import org.kndl.pants.{PantsProtocol, Server}
 import org.slf4j.{Logger, LoggerFactory}
 
 
@@ -12,20 +11,22 @@ class Dispatcher extends Actor {
 
   val LOGGER: Logger = LoggerFactory.getLogger(classOf[Dispatcher])
 
-  var connections: Map[Int,Channel] = Map()
+  var clients: Map[Int,ActorRef] = Map()
+
+  var names: Map[ActorRef,String] = Map()
+  var channels: Map[String,Set[ActorRef]] = Map()
 
   override def receive = {
-    case RECV(ctx,packet) =>
-      LOGGER.info("Sender: " + sender.path.name + " " + packet.getType.toString + " " + ctx.channel())
-      handleMessage(sender(),packet)
+    case in: IN =>
+      LOGGER.info("Sender: " + sender.path.name + " " + in.msg.getType.toString)
+      handleMessage(sender(),in.msg)
   }
 
   def handleMessage(sender: ActorRef, msg: Pants) = {
     msg.getType match {
-      case Pants.Type.PING =>
-        val p = ping(msg.getData)
-        sender ! RECV()
-
+      case Pants.Type.MSG =>
+      case Pants.Type.PRIVMSG =>
+      case Pants.Type.JOIN =>
     }
   }
 
