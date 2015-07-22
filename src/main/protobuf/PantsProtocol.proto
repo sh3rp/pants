@@ -59,10 +59,12 @@ message PrivMsg {
 
 message Ping {
    optional Version version = 1;
+   optional int64 timestamp = 2;
 }
 
 message Pong {
    optional Version version = 1;
+   optional int64 timestamp = 2;
 }
 
 message Control {
