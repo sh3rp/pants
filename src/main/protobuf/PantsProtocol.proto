@@ -26,7 +26,7 @@ message Login {
    required Type type = 1;
    optional string username = 2;
    optional string password = 3;
-   optional int64 userId = 4;
+   optional int32 userId = 4;
 }
 
 message Version {
@@ -36,24 +36,20 @@ message Version {
 }
 
 message Join {
-   enum Type {
-      REQUEST = 0;
-      RESPONSE = 1;
-   }
-   optional int64 user = 1;
+   optional int32 user = 1;
    optional string channel = 2;
    optional int32 channelId = 3;
 }
 
 message Msg {
-   optional int64 user = 1;
+   optional int32 user = 1;
    optional int32 channel = 2;
    optional string message = 3;   
 }
 
 message PrivMsg {
-   optional int64 userFrom = 1;
-   optional int64 userTo = 2;
+   optional int32 userFrom = 1;
+   optional int32 userTo = 2;
    optional string message = 3;
 }
 

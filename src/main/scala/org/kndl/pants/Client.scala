@@ -25,6 +25,7 @@ object Client extends App {
     val ch: Channel = b.connect(HOST, PORT).sync().channel()
     val handler: ClientHandler = ch.pipeline().get[ClientHandler](classOf[ClientHandler])
     val con = new ConsoleReader()
+    handler.sendLogin("sh3rp","password")
     /*    while(true) {
           con.readCharacter() match {
             case 49 =>

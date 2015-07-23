@@ -689,13 +689,13 @@ public final class PantsProtocol {
         getPasswordBytes();
 
     /**
-     * <code>optional int64 userId = 4;</code>
+     * <code>optional int32 userId = 4;</code>
      */
     boolean hasUserId();
     /**
-     * <code>optional int64 userId = 4;</code>
+     * <code>optional int32 userId = 4;</code>
      */
-    long getUserId();
+    int getUserId();
   }
   /**
    * Protobuf type {@code org.kndl.pants.Login}
@@ -774,7 +774,7 @@ public final class PantsProtocol {
             }
             case 32: {
               bitField0_ |= 0x00000008;
-              userId_ = input.readInt64();
+              userId_ = input.readInt32();
               break;
             }
           }
@@ -1008,17 +1008,17 @@ public final class PantsProtocol {
     }
 
     public static final int USERID_FIELD_NUMBER = 4;
-    private long userId_;
+    private int userId_;
     /**
-     * <code>optional int64 userId = 4;</code>
+     * <code>optional int32 userId = 4;</code>
      */
     public boolean hasUserId() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional int64 userId = 4;</code>
+     * <code>optional int32 userId = 4;</code>
      */
-    public long getUserId() {
+    public int getUserId() {
       return userId_;
     }
 
@@ -1026,7 +1026,7 @@ public final class PantsProtocol {
       type_ = org.kndl.pants.PantsProtocol.Login.Type.REQUEST;
       username_ = "";
       password_ = "";
-      userId_ = 0L;
+      userId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1055,7 +1055,7 @@ public final class PantsProtocol {
         output.writeBytes(3, getPasswordBytes());
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
-        output.writeInt64(4, userId_);
+        output.writeInt32(4, userId_);
       }
       getUnknownFields().writeTo(output);
     }
@@ -1080,7 +1080,7 @@ public final class PantsProtocol {
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(4, userId_);
+          .computeInt32Size(4, userId_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1205,7 +1205,7 @@ public final class PantsProtocol {
         bitField0_ = (bitField0_ & ~0x00000002);
         password_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
-        userId_ = 0L;
+        userId_ = 0;
         bitField0_ = (bitField0_ & ~0x00000008);
         return this;
       }
@@ -1501,34 +1501,34 @@ public final class PantsProtocol {
         return this;
       }
 
-      private long userId_ ;
+      private int userId_ ;
       /**
-       * <code>optional int64 userId = 4;</code>
+       * <code>optional int32 userId = 4;</code>
        */
       public boolean hasUserId() {
         return ((bitField0_ & 0x00000008) == 0x00000008);
       }
       /**
-       * <code>optional int64 userId = 4;</code>
+       * <code>optional int32 userId = 4;</code>
        */
-      public long getUserId() {
+      public int getUserId() {
         return userId_;
       }
       /**
-       * <code>optional int64 userId = 4;</code>
+       * <code>optional int32 userId = 4;</code>
        */
-      public Builder setUserId(long value) {
+      public Builder setUserId(int value) {
         bitField0_ |= 0x00000008;
         userId_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 userId = 4;</code>
+       * <code>optional int32 userId = 4;</code>
        */
       public Builder clearUserId() {
         bitField0_ = (bitField0_ & ~0x00000008);
-        userId_ = 0L;
+        userId_ = 0;
         onChanged();
         return this;
       }
@@ -2102,13 +2102,13 @@ public final class PantsProtocol {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
     boolean hasUser();
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
-    long getUser();
+    int getUser();
 
     /**
      * <code>optional string channel = 2;</code>
@@ -2187,7 +2187,7 @@ public final class PantsProtocol {
             }
             case 8: {
               bitField0_ |= 0x00000001;
-              user_ = input.readInt64();
+              user_ = input.readInt32();
               break;
             }
             case 18: {
@@ -2240,101 +2240,19 @@ public final class PantsProtocol {
       return PARSER;
     }
 
-    /**
-     * Protobuf enum {@code org.kndl.pants.Join.Type}
-     */
-    public enum Type
-        implements com.google.protobuf.ProtocolMessageEnum {
-      /**
-       * <code>REQUEST = 0;</code>
-       */
-      REQUEST(0, 0),
-      /**
-       * <code>RESPONSE = 1;</code>
-       */
-      RESPONSE(1, 1),
-      ;
-
-      /**
-       * <code>REQUEST = 0;</code>
-       */
-      public static final int REQUEST_VALUE = 0;
-      /**
-       * <code>RESPONSE = 1;</code>
-       */
-      public static final int RESPONSE_VALUE = 1;
-
-
-      public final int getNumber() { return value; }
-
-      public static Type valueOf(int value) {
-        switch (value) {
-          case 0: return REQUEST;
-          case 1: return RESPONSE;
-          default: return null;
-        }
-      }
-
-      public static com.google.protobuf.Internal.EnumLiteMap<Type>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static com.google.protobuf.Internal.EnumLiteMap<Type>
-          internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<Type>() {
-              public Type findValueByNumber(int number) {
-                return Type.valueOf(number);
-              }
-            };
-
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
-          getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
-      }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptorForType() {
-        return getDescriptor();
-      }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptor() {
-        return org.kndl.pants.PantsProtocol.Join.getDescriptor().getEnumTypes().get(0);
-      }
-
-      private static final Type[] VALUES = values();
-
-      public static Type valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException(
-            "EnumValueDescriptor is not for this type.");
-        }
-        return VALUES[desc.getIndex()];
-      }
-
-      private final int index;
-      private final int value;
-
-      private Type(int index, int value) {
-        this.index = index;
-        this.value = value;
-      }
-
-      // @@protoc_insertion_point(enum_scope:org.kndl.pants.Join.Type)
-    }
-
     private int bitField0_;
     public static final int USER_FIELD_NUMBER = 1;
-    private long user_;
+    private int user_;
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
     public boolean hasUser() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
-    public long getUser() {
+    public int getUser() {
       return user_;
     }
 
@@ -2396,7 +2314,7 @@ public final class PantsProtocol {
     }
 
     private void initFields() {
-      user_ = 0L;
+      user_ = 0;
       channel_ = "";
       channelId_ = 0;
     }
@@ -2414,7 +2332,7 @@ public final class PantsProtocol {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt64(1, user_);
+        output.writeInt32(1, user_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeBytes(2, getChannelBytes());
@@ -2433,7 +2351,7 @@ public final class PantsProtocol {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, user_);
+          .computeInt32Size(1, user_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
@@ -2560,7 +2478,7 @@ public final class PantsProtocol {
 
       public Builder clear() {
         super.clear();
-        user_ = 0L;
+        user_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         channel_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -2660,34 +2578,34 @@ public final class PantsProtocol {
       }
       private int bitField0_;
 
-      private long user_ ;
+      private int user_ ;
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
       public boolean hasUser() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
-      public long getUser() {
+      public int getUser() {
         return user_;
       }
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
-      public Builder setUser(long value) {
+      public Builder setUser(int value) {
         bitField0_ |= 0x00000001;
         user_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
       public Builder clearUser() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        user_ = 0L;
+        user_ = 0;
         onChanged();
         return this;
       }
@@ -2816,13 +2734,13 @@ public final class PantsProtocol {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
     boolean hasUser();
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
-    long getUser();
+    int getUser();
 
     /**
      * <code>optional int32 channel = 2;</code>
@@ -2901,7 +2819,7 @@ public final class PantsProtocol {
             }
             case 8: {
               bitField0_ |= 0x00000001;
-              user_ = input.readInt64();
+              user_ = input.readInt32();
               break;
             }
             case 16: {
@@ -2956,17 +2874,17 @@ public final class PantsProtocol {
 
     private int bitField0_;
     public static final int USER_FIELD_NUMBER = 1;
-    private long user_;
+    private int user_;
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
     public boolean hasUser() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int64 user = 1;</code>
+     * <code>optional int32 user = 1;</code>
      */
-    public long getUser() {
+    public int getUser() {
       return user_;
     }
 
@@ -3028,7 +2946,7 @@ public final class PantsProtocol {
     }
 
     private void initFields() {
-      user_ = 0L;
+      user_ = 0;
       channel_ = 0;
       message_ = "";
     }
@@ -3046,7 +2964,7 @@ public final class PantsProtocol {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt64(1, user_);
+        output.writeInt32(1, user_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         output.writeInt32(2, channel_);
@@ -3065,7 +2983,7 @@ public final class PantsProtocol {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, user_);
+          .computeInt32Size(1, user_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
@@ -3192,7 +3110,7 @@ public final class PantsProtocol {
 
       public Builder clear() {
         super.clear();
-        user_ = 0L;
+        user_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
         channel_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -3292,34 +3210,34 @@ public final class PantsProtocol {
       }
       private int bitField0_;
 
-      private long user_ ;
+      private int user_ ;
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
       public boolean hasUser() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
-      public long getUser() {
+      public int getUser() {
         return user_;
       }
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
-      public Builder setUser(long value) {
+      public Builder setUser(int value) {
         bitField0_ |= 0x00000001;
         user_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 user = 1;</code>
+       * <code>optional int32 user = 1;</code>
        */
       public Builder clearUser() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        user_ = 0L;
+        user_ = 0;
         onChanged();
         return this;
       }
@@ -3448,22 +3366,22 @@ public final class PantsProtocol {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>optional int64 userFrom = 1;</code>
+     * <code>optional int32 userFrom = 1;</code>
      */
     boolean hasUserFrom();
     /**
-     * <code>optional int64 userFrom = 1;</code>
+     * <code>optional int32 userFrom = 1;</code>
      */
-    long getUserFrom();
+    int getUserFrom();
 
     /**
-     * <code>optional int64 userTo = 2;</code>
+     * <code>optional int32 userTo = 2;</code>
      */
     boolean hasUserTo();
     /**
-     * <code>optional int64 userTo = 2;</code>
+     * <code>optional int32 userTo = 2;</code>
      */
-    long getUserTo();
+    int getUserTo();
 
     /**
      * <code>optional string message = 3;</code>
@@ -3533,12 +3451,12 @@ public final class PantsProtocol {
             }
             case 8: {
               bitField0_ |= 0x00000001;
-              userFrom_ = input.readInt64();
+              userFrom_ = input.readInt32();
               break;
             }
             case 16: {
               bitField0_ |= 0x00000002;
-              userTo_ = input.readInt64();
+              userTo_ = input.readInt32();
               break;
             }
             case 26: {
@@ -3588,32 +3506,32 @@ public final class PantsProtocol {
 
     private int bitField0_;
     public static final int USERFROM_FIELD_NUMBER = 1;
-    private long userFrom_;
+    private int userFrom_;
     /**
-     * <code>optional int64 userFrom = 1;</code>
+     * <code>optional int32 userFrom = 1;</code>
      */
     public boolean hasUserFrom() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int64 userFrom = 1;</code>
+     * <code>optional int32 userFrom = 1;</code>
      */
-    public long getUserFrom() {
+    public int getUserFrom() {
       return userFrom_;
     }
 
     public static final int USERTO_FIELD_NUMBER = 2;
-    private long userTo_;
+    private int userTo_;
     /**
-     * <code>optional int64 userTo = 2;</code>
+     * <code>optional int32 userTo = 2;</code>
      */
     public boolean hasUserTo() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional int64 userTo = 2;</code>
+     * <code>optional int32 userTo = 2;</code>
      */
-    public long getUserTo() {
+    public int getUserTo() {
       return userTo_;
     }
 
@@ -3660,8 +3578,8 @@ public final class PantsProtocol {
     }
 
     private void initFields() {
-      userFrom_ = 0L;
-      userTo_ = 0L;
+      userFrom_ = 0;
+      userTo_ = 0;
       message_ = "";
     }
     private byte memoizedIsInitialized = -1;
@@ -3678,10 +3596,10 @@ public final class PantsProtocol {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt64(1, userFrom_);
+        output.writeInt32(1, userFrom_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeInt64(2, userTo_);
+        output.writeInt32(2, userTo_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeBytes(3, getMessageBytes());
@@ -3697,11 +3615,11 @@ public final class PantsProtocol {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(1, userFrom_);
+          .computeInt32Size(1, userFrom_);
       }
       if (((bitField0_ & 0x00000002) == 0x00000002)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt64Size(2, userTo_);
+          .computeInt32Size(2, userTo_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
@@ -3824,9 +3742,9 @@ public final class PantsProtocol {
 
       public Builder clear() {
         super.clear();
-        userFrom_ = 0L;
+        userFrom_ = 0;
         bitField0_ = (bitField0_ & ~0x00000001);
-        userTo_ = 0L;
+        userTo_ = 0;
         bitField0_ = (bitField0_ & ~0x00000002);
         message_ = "";
         bitField0_ = (bitField0_ & ~0x00000004);
@@ -3924,66 +3842,66 @@ public final class PantsProtocol {
       }
       private int bitField0_;
 
-      private long userFrom_ ;
+      private int userFrom_ ;
       /**
-       * <code>optional int64 userFrom = 1;</code>
+       * <code>optional int32 userFrom = 1;</code>
        */
       public boolean hasUserFrom() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int64 userFrom = 1;</code>
+       * <code>optional int32 userFrom = 1;</code>
        */
-      public long getUserFrom() {
+      public int getUserFrom() {
         return userFrom_;
       }
       /**
-       * <code>optional int64 userFrom = 1;</code>
+       * <code>optional int32 userFrom = 1;</code>
        */
-      public Builder setUserFrom(long value) {
+      public Builder setUserFrom(int value) {
         bitField0_ |= 0x00000001;
         userFrom_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 userFrom = 1;</code>
+       * <code>optional int32 userFrom = 1;</code>
        */
       public Builder clearUserFrom() {
         bitField0_ = (bitField0_ & ~0x00000001);
-        userFrom_ = 0L;
+        userFrom_ = 0;
         onChanged();
         return this;
       }
 
-      private long userTo_ ;
+      private int userTo_ ;
       /**
-       * <code>optional int64 userTo = 2;</code>
+       * <code>optional int32 userTo = 2;</code>
        */
       public boolean hasUserTo() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
       /**
-       * <code>optional int64 userTo = 2;</code>
+       * <code>optional int32 userTo = 2;</code>
        */
-      public long getUserTo() {
+      public int getUserTo() {
         return userTo_;
       }
       /**
-       * <code>optional int64 userTo = 2;</code>
+       * <code>optional int32 userTo = 2;</code>
        */
-      public Builder setUserTo(long value) {
+      public Builder setUserTo(int value) {
         bitField0_ |= 0x00000002;
         userTo_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>optional int64 userTo = 2;</code>
+       * <code>optional int32 userTo = 2;</code>
        */
       public Builder clearUserTo() {
         bitField0_ = (bitField0_ & ~0x00000002);
-        userTo_ = 0L;
+        userTo_ = 0;
         onChanged();
         return this;
       }
@@ -5796,20 +5714,19 @@ public final class PantsProtocol {
       "ONG\020\006\022\013\n\007CONTROL\020\007\"\221\001\n\005Login\022(\n\004type\030\001 \002" +
       "(\0162\032.org.kndl.pants.Login.Type\022\020\n\010userna" +
       "me\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\016\n\006userId\030\004 \001" +
-      "(\003\"*\n\004Type\022\013\n\007REQUEST\020\000\022\013\n\007SUCCESS\020\001\022\010\n\004" +
+      "(\005\"*\n\004Type\022\013\n\007REQUEST\020\000\022\013\n\007SUCCESS\020\001\022\010\n\004" +
       "FAIL\020\002\"6\n\007Version\022\r\n\005major\030\001 \001(\005\022\r\n\005mino",
-      "r\030\002 \001(\005\022\r\n\005patch\030\003 \001(\005\"[\n\004Join\022\014\n\004user\030\001" +
-      " \001(\003\022\017\n\007channel\030\002 \001(\t\022\021\n\tchannelId\030\003 \001(\005" +
-      "\"!\n\004Type\022\013\n\007REQUEST\020\000\022\014\n\010RESPONSE\020\001\"5\n\003M" +
-      "sg\022\014\n\004user\030\001 \001(\003\022\017\n\007channel\030\002 \001(\005\022\017\n\007mes" +
-      "sage\030\003 \001(\t\"<\n\007PrivMsg\022\020\n\010userFrom\030\001 \001(\003\022" +
-      "\016\n\006userTo\030\002 \001(\003\022\017\n\007message\030\003 \001(\t\"C\n\004Ping" +
-      "\022(\n\007version\030\001 \001(\0132\027.org.kndl.pants.Versi" +
-      "on\022\021\n\ttimestamp\030\002 \001(\003\"C\n\004Pong\022(\n\007version" +
-      "\030\001 \001(\0132\027.org.kndl.pants.Version\022\021\n\ttimes" +
-      "tamp\030\002 \001(\003\"I\n\007Control\022*\n\004type\030\001 \002(\0162\034.or",
-      "g.kndl.pants.Control.Type\"\022\n\004Type\022\n\n\006STA" +
-      "TUS\020\000B\020\n\016org.kndl.pants"
+      "r\030\002 \001(\005\022\r\n\005patch\030\003 \001(\005\"8\n\004Join\022\014\n\004user\030\001" +
+      " \001(\005\022\017\n\007channel\030\002 \001(\t\022\021\n\tchannelId\030\003 \001(\005" +
+      "\"5\n\003Msg\022\014\n\004user\030\001 \001(\005\022\017\n\007channel\030\002 \001(\005\022\017" +
+      "\n\007message\030\003 \001(\t\"<\n\007PrivMsg\022\020\n\010userFrom\030\001" +
+      " \001(\005\022\016\n\006userTo\030\002 \001(\005\022\017\n\007message\030\003 \001(\t\"C\n" +
+      "\004Ping\022(\n\007version\030\001 \001(\0132\027.org.kndl.pants." +
+      "Version\022\021\n\ttimestamp\030\002 \001(\003\"C\n\004Pong\022(\n\007ve" +
+      "rsion\030\001 \001(\0132\027.org.kndl.pants.Version\022\021\n\t" +
+      "timestamp\030\002 \001(\003\"I\n\007Control\022*\n\004type\030\001 \002(\016" +
+      "2\034.org.kndl.pants.Control.Type\"\022\n\004Type\022\n",
+      "\n\006STATUS\020\000B\020\n\016org.kndl.pants"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {

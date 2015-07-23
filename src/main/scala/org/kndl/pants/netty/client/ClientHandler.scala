@@ -16,6 +16,12 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
   val LOGGER: Logger = LoggerFactory.getLogger(classOf[ClientHandler])
 
   var ctx: ChannelHandlerContext = _
+  var userId: Int = _
+  var channels:Map[String,Int] = Map()
+
+  def sendLogin(username: String, password: String) = {
+    ctx.writeAndFlush(login(username,password))
+  }
 
   def sendPing() = {
     ctx.writeAndFlush(ping)
@@ -26,7 +32,7 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
   }
 
   def sendJoin(user: String, channel: String) = {
-    ctx.writeAndFlush(join(user,channel))
+    ctx.writeAndFlush(join(channel))
   }
 
   override def channelRegistered(ctx: ChannelHandlerContext) = {
@@ -35,6 +41,14 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
 
   override def channelRead0(channelHandlerContext: ChannelHandlerContext, msg: Pants): Unit = {
     msg.getType() match {
+      case PantsProtocol.Pants.Type.LOGIN =>
+        val login: Login = PantsProtocol.Login.parseFrom(msg.getData)
+        login.getType match {
+          case Login.Type.SUCCESS =>
+            userId = login.getUserId
+          case Login.Type.FAIL =>
+            userId = 0
+        }
       case PantsProtocol.Pants.Type.PONG =>
         val pong: Pong = PantsProtocol.Pong.parseFrom(msg.getData)
         LOGGER.info("PONG v{}.{}.{} ({}ms)",
@@ -45,6 +59,9 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
       case PantsProtocol.Pants.Type.MSG =>
         val message: Msg = PantsProtocol.Msg.parseFrom(msg.getData)
         LOGGER.info("<{}> {}",message.getChannel,message.getMessage)
+      case PantsProtocol.Pants.Type.JOIN =>
+        val join: Join = PantsProtocol.Join.parseFrom(msg.getData)
+
       case _ =>
     }
   }
@@ -53,16 +70,23 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
     c.printStackTrace()
   }
 
+  def login(username: String, password: String):Pants = {
+    Pants.newBuilder()
+      .setType(Pants.Type.LOGIN)
+      .setData(Login.newBuilder().setUsername(username).setPassword(password).setType(Login.Type.REQUEST).build().toByteString)
+      .build()
+  }
+
   def ping:Pants = {
     Pants.newBuilder()
       .setType(Pants.Type.PING)
       .setData(Ping.newBuilder().setTimestamp(System.currentTimeMillis()).build().toByteString).build()
   }
 
-  def join(user: String, channel: String): Pants = {
+  def join(channel: String): Pants = {
     Pants.newBuilder()
       .setType(Pants.Type.JOIN)
-      .setData(Join.newBuilder().setChannel(channel).build().toByteString)
+      .setData(Join.newBuilder().setUser(userId).setChannelId(channel.hashCode).build().toByteString)
       .build()
   }
 

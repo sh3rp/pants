@@ -2,7 +2,7 @@ package org.kndl.pants.akka
 
 import akka.actor.{Actor, ActorRef}
 import com.google.protobuf.ByteString
-import org.kndl.pants.PantsProtocol.{Pants, Ping}
+import org.kndl.pants.PantsProtocol._
 import org.kndl.pants.{PantsProtocol, Server}
 import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.immutable.Map
@@ -14,17 +14,19 @@ class Dispatcher extends Actor {
 
   var clients: Map[Int,ActorRef] = Map()
 
-  var names: Map[ActorRef,String] = Map()
-  var channels: Map[Int,Set[ActorRef]] = Map()
+  var names: Map[Int,ActorRef] = Map()
+  var channels: Map[Int,Set[Int]] = Map()
 
   override def receive = {
     case in: IN =>
-      LOGGER.info("Sender: " + sender.path.name + " " + in.msg.getType.toString)
       handleMessage(sender(),in.msg)
   }
 
   def handleMessage(sender: ActorRef, msg: Pants) = {
     msg.getType match {
+      case Pants.Type.LOGIN =>
+        val login: PantsProtocol.Login = PantsProtocol.Login.parseFrom(msg.getData)
+        handleLogin(sender,login)
       case Pants.Type.MSG =>
         val message: PantsProtocol.Msg = PantsProtocol.Msg.parseFrom(msg.getData)
         LOGGER.info("MSG to {} : {}",message.getChannel,message.getMessage)
@@ -50,23 +52,59 @@ class Dispatcher extends Actor {
     }
   }
 
-  def ping(bytes: ByteString): Ping = {
-    PantsProtocol.Ping.parseFrom(bytes)
+  def handleLogin(sender: ActorRef, login: Login) = {
+    login.getType match {
+      case Login.Type.REQUEST =>
+        login.getPassword match {
+          case "password" =>
+            names = names ++ Map(login.getUsername.hashCode -> sender)
+            LOGGER.info("Password accepted for {}",login.getUsername)
+            sender ! OUT(newLogin(Login.Type.SUCCESS,login.getUsername.hashCode))
+          case _ =>
+            LOGGER.info("Password failed for {}",login.getUsername)
+            sender ! OUT(newLogin(Login.Type.FAIL,0))
+        }
+      case _ =>
+        LOGGER.info("Unknown login type")
+        sender ! OUT(newLogin(Login.Type.FAIL,0))
+    }
   }
 
-  def newMsg(msg: String): PantsProtocol.Pants = {
-    PantsProtocol.Pants.newBuilder()
-      .setType(PantsProtocol.Pants.Type.MSG)
-      .setData(PantsProtocol.Msg.newBuilder()
+  def handleJoin(join: Join) = {
+    channels.contains(join.getChannelId) match {
+      case false =>
+        channels = channels ++ Map(join.getChannelId -> Set(join.getuser))
+      case true =>
+    }
+  }
+
+  def ping(bytes: ByteString): Ping = {
+    Ping.parseFrom(bytes)
+  }
+
+  def newLogin(loginType: Login.Type, userId: Long): Pants = {
+    Pants.newBuilder()
+      .setType(Pants.Type.LOGIN)
+      .setData(Login.newBuilder()
+        .setType(loginType)
+        .setUserId(userId)
+        .build().toByteString)
+      .build()
+  }
+
+  def newMsg(msg: String): Pants = {
+    Pants.newBuilder()
+      .setType(Pants.Type.MSG)
+      .setData(Msg.newBuilder()
       .setMessage(msg).build().toByteString)
       .build()
   }
 
-  def newPong(timestamp: Long): PantsProtocol.Pants = {
-    PantsProtocol.Pants.newBuilder()
-      .setType(PantsProtocol.Pants.Type.PONG)
+  def newPong(timestamp: Long): Pants = {
+    Pants.newBuilder()
+      .setType(Pants.Type.PONG)
       .setData(
-        PantsProtocol.Pong.newBuilder()
+        Pong.newBuilder()
           .setVersion(version)
           .setTimestamp(timestamp)
           .build()
@@ -74,8 +112,8 @@ class Dispatcher extends Actor {
       ).build()
   }
 
-  def version: PantsProtocol.Version = {
-    PantsProtocol.Version.newBuilder()
+  def version: Version = {
+    Version.newBuilder()
       .setMajor(Server.vma)
       .setMinor(Server.vmi)
       .setPatch(Server.vpa)
