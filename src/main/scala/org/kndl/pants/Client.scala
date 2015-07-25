@@ -26,21 +26,11 @@ object Client extends App {
     val handler: ClientHandler = ch.pipeline().get[ClientHandler](classOf[ClientHandler])
     val con = new ConsoleReader()
     handler.sendLogin("sh3rp","password")
-    /*    while(true) {
-          con.readCharacter() match {
-            case 49 =>
-              println("sending ping")
-              handler.sendPing()
-            case 50 =>
-              println("sending msg")
-              handler.sendMsg("OHAI!")
-            case _ =>
-          }
-        }*/
     for (x <- 1 to 10) {
       handler.sendPing()
     }
-    handler.sendJoin("sherp","test")
+    Thread.sleep(3000)
+    handler.sendJoinRequest("test")
     Thread.sleep(5000)
     handler.sendMsg("test","Hello!")
     Thread.sleep(1000)

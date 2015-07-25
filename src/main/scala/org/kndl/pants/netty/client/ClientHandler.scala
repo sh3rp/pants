@@ -1,7 +1,7 @@
 package org.kndl.pants.netty.client
 
 import io.netty.channel.{ChannelHandlerContext, SimpleChannelInboundHandler}
-import org.kndl.pants.PantsProtocol
+import org.kndl.pants.{PantsCapable, Client, PantsProtocol}
 import org.kndl.pants.PantsProtocol._
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -11,28 +11,35 @@ import org.slf4j.{Logger, LoggerFactory}
  * @author shep
  *
  **/
-class ClientHandler extends SimpleChannelInboundHandler[Pants] {
+class ClientHandler extends SimpleChannelInboundHandler[Pants] with PantsCapable {
 
   val LOGGER: Logger = LoggerFactory.getLogger(classOf[ClientHandler])
 
   var ctx: ChannelHandlerContext = _
-  var userId: Int = _
-  var channels:Map[String,Int] = Map()
+  var username: String = _
+  var userId: Long = _
+  var channelsNameToId: Map[String,Long] = Map()
+  var channelsIdToName: Map[Long,String] = Map()
 
   def sendLogin(username: String, password: String) = {
-    ctx.writeAndFlush(login(username,password))
+    this.username = username
+    ctx.writeAndFlush(newLoginRequest(username,password))
   }
 
   def sendPing() = {
-    ctx.writeAndFlush(ping)
+    ctx.writeAndFlush(newPing)
   }
 
   def sendMsg(channel: String, message: String) = {
-    ctx.writeAndFlush(msg(channel,message))
+    if(channelsNameToId.contains(channel)) {
+      LOGGER.info("UserID {} sending msg",userId)
+      ctx.writeAndFlush(newMessage(channelsNameToId(channel), userId, message))
+    }
   }
 
-  def sendJoin(user: String, channel: String) = {
-    ctx.writeAndFlush(join(channel))
+  def sendJoinRequest(channel: String) = {
+    LOGGER.info("Using userId {} to send join",userId)
+    ctx.writeAndFlush(newJoinRequest(channel,userId))
   }
 
   override def channelRegistered(ctx: ChannelHandlerContext) = {
@@ -41,59 +48,35 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] {
 
   override def channelRead0(channelHandlerContext: ChannelHandlerContext, msg: Pants): Unit = {
     msg.getType() match {
-      case PantsProtocol.Pants.Type.LOGIN =>
-        val login: Login = PantsProtocol.Login.parseFrom(msg.getData)
-        login.getType match {
-          case Login.Type.SUCCESS =>
-            userId = login.getUserId
-          case Login.Type.FAIL =>
-            userId = 0
+      case PantsProtocol.Pants.Type.LOGIN_RESPONSE =>
+        msg.getLoggedIn match {
+          case true => userId = msg.getUserId
+            LOGGER.debug("Login for user {} succeeded, userId = {}",username,msg.getUserId)
+          case false => userId = 0
+            LOGGER.debug("Login for user {} failed",msg.getUserId)
         }
       case PantsProtocol.Pants.Type.PONG =>
-        val pong: Pong = PantsProtocol.Pong.parseFrom(msg.getData)
         LOGGER.info("PONG v{}.{}.{} ({}ms)",
-          Integer.toString(pong.getVersion().getMajor),
-          Integer.toString(pong.getVersion().getMinor),
-          Integer.toString(pong.getVersion.getPatch),
-          (System.currentTimeMillis() - pong.getTimestamp).toString)
+          Integer.toString(msg.getVersionMajor),
+          Integer.toString(msg.getVersionMinor),
+          Integer.toString(msg.getVersionPatch),
+          (System.currentTimeMillis() - msg.getTimestamp).toString)
       case PantsProtocol.Pants.Type.MSG =>
-        val message: Msg = PantsProtocol.Msg.parseFrom(msg.getData)
-        LOGGER.info("<{}> {}",message.getChannel,message.getMessage)
-      case PantsProtocol.Pants.Type.JOIN =>
-        val join: Join = PantsProtocol.Join.parseFrom(msg.getData)
-
+        LOGGER.info("<{}:{}> {}",channelsIdToName(msg.getChannelId),"lol",msg.getMessage)
+      case PantsProtocol.Pants.Type.JOIN_RESPONSE =>
+        msg.getChannelId match {
+          case 0 =>
+            LOGGER.info("Joining channel {} failed",msg.getChannelName)
+          case chanId: Long =>
+            LOGGER.info("Channel {} registered to id {}",msg.getChannelName,msg.getChannelId)
+            channelsNameToId = channelsNameToId ++ Map(msg.getChannelName -> chanId)
+            channelsIdToName = channelsIdToName ++ Map(chanId -> msg.getChannelName)
+        }
       case _ =>
     }
   }
 
   override def exceptionCaught(ctx: ChannelHandlerContext, c: Throwable): Unit = {
     c.printStackTrace()
-  }
-
-  def login(username: String, password: String):Pants = {
-    Pants.newBuilder()
-      .setType(Pants.Type.LOGIN)
-      .setData(Login.newBuilder().setUsername(username).setPassword(password).setType(Login.Type.REQUEST).build().toByteString)
-      .build()
-  }
-
-  def ping:Pants = {
-    Pants.newBuilder()
-      .setType(Pants.Type.PING)
-      .setData(Ping.newBuilder().setTimestamp(System.currentTimeMillis()).build().toByteString).build()
-  }
-
-  def join(channel: String): Pants = {
-    Pants.newBuilder()
-      .setType(Pants.Type.JOIN)
-      .setData(Join.newBuilder().setUser(userId).setChannelId(channel.hashCode).build().toByteString)
-      .build()
-  }
-
-  def msg(channel: String, msg: String):Pants = {
-    Pants.newBuilder()
-      .setType(Pants.Type.MSG)
-      .setData(Msg.newBuilder().setChannel(channel.hashCode).setMessage(msg).build().toByteString)
-      .build()
   }
 }

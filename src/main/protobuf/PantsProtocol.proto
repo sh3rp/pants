@@ -3,20 +3,34 @@ package org.kndl.pants;
 option java_package = "org.kndl.pants";
 
 message Pants {
-   enum Type {
-      LOGIN = 0;
-      VERSION = 1;
-      JOIN = 2;
-      MSG = 3;
-      PRIVMSG = 4;
-      PING = 5;
-      PONG = 6;
-      CONTROL = 7;
-   }
-   required Type type = 1;
-   required bytes data = 2;
+    enum Type {
+        LOGIN_REQUEST = 0;
+        LOGIN_RESPONSE = 1;
+        VERSION = 2;
+        JOIN_REQUEST = 3;
+        JOIN_RESPONSE = 4;
+        MSG = 5;
+        PRIVMSG = 6;
+        PING = 7;
+        PONG = 8;
+        ERROR = 253;
+        CONTROL = 254;
+    }
+    required Type type = 1;
+    optional string username = 2;
+    optional string password = 3;
+    optional bool loggedIn = 4;
+    optional int64 userId = 5;
+    optional int32 versionMajor = 6;
+    optional int32 versionMinor = 7;
+    optional int32 versionPatch = 8;
+    optional int64 channelId = 9;
+    optional string channelName = 10;
+    optional string message = 11;
+    optional int64 timestamp = 12;
+    optional bytes data = 254;
 }
-
+/*
 message Login {
    enum Type {
       REQUEST = 0;
@@ -68,4 +82,4 @@ message Control {
       STATUS = 0;
    }
    required Type type = 1;
-}
+}*/

@@ -16,10 +16,6 @@ object Server extends App {
 
   val LOGGER: Logger = LoggerFactory.getLogger("Server")
 
-  val vma = 1
-  val vmi = 0
-  val vpa = 0
-
   val SSL: Boolean = true
   val PORT: Int = 8463
   var sslCtx: SslContext = _
