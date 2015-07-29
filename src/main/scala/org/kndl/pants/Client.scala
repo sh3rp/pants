@@ -10,6 +10,29 @@ import io.netty.handler.ssl.{SslContext, SslContextBuilder}
 import jline.console.ConsoleReader
 import org.kndl.pants.netty.client.{ClientHandler, ClientInitializer}
 
+class Client(host: String, port: Int) {
+
+  private val connection: ClientHandler = {
+    val ctx: SslContext = SslContextBuilder.forClient()
+      .trustManager(InsecureTrustManagerFactory.INSTANCE).build()
+    val group: EventLoopGroup = new NioEventLoopGroup()
+    val b: Bootstrap = new Bootstrap().group(group).channel(classOf[NioSocketChannel]).handler(new ClientInitializer(ctx))
+    val ch: Channel = b.connect(host, port).sync().channel()
+    ch.pipeline().get[ClientHandler](classOf[ClientHandler])
+  }
+
+  def ping() = connection.sendPing()
+
+  def login(username: String, password: String) = connection.sendLogin(username,password)
+
+  def loggedIn: Boolean = connection.loggedIn
+
+  def join(channel: String) = connection.sendJoinRequest(channel)
+
+  def msg(toUser: String, msg: String) = {
+    connection.send
+  }
+}
 
 object Client extends App {
 

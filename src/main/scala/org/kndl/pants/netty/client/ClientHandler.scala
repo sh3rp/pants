@@ -20,6 +20,7 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] with PantsCapable
   var userId: Long = _
   var channelsNameToId: Map[String,Long] = Map()
   var channelsIdToName: Map[Long,String] = Map()
+  var users: Map[String,Long] = Map()
 
   def loggedIn:Boolean = userId != 0
 
@@ -46,6 +47,10 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] with PantsCapable
     ctx.writeAndFlush(newJoinRequest(channel,userId))
   }
 
+  def sendPrivMsg(user: String, message: String) = {
+    ctx.writeAndFlush(newPrivateMessage())
+  }
+
   override def channelRegistered(ctx: ChannelHandlerContext) = {
     this.ctx = ctx
   }
@@ -67,6 +72,8 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] with PantsCapable
           (System.currentTimeMillis() - msg.getTimestamp).toString)
       case PantsProtocol.Pants.Type.MSG =>
         LOGGER.info("<{}:{}> {}",channelsIdToName(msg.getChannelId),"lol",msg.getMessage)
+      case PantsProtocol.Pants.Type.PRIVMSG =>
+        LOGGER.info("[{}] {}",msg.getUserId,msg.getMessage)
       case PantsProtocol.Pants.Type.JOIN_RESPONSE =>
         msg.getChannelId match {
           case 0 =>

@@ -28,6 +28,7 @@ message Pants {
     optional string channelName = 10;
     optional string message = 11;
     optional int64 timestamp = 12;
+    optional int64 toUserId = 13;
     optional bytes data = 254;
 }
 /*

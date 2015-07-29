@@ -10,7 +10,7 @@ import io.netty.handler.logging.{LogLevel, LoggingHandler}
 import io.netty.handler.ssl.util.SelfSignedCertificate
 import io.netty.handler.ssl.{SslContext, SslContextBuilder}
 import org.kndl.pants.akka.Dispatcher
-import org.kndl.pants.auth.Authenticator
+import org.kndl.pants.auth.UserRegistry
 import org.kndl.pants.netty.server.ServerInitializer
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -33,7 +33,7 @@ object Server extends App {
 
     val actorSystem = ActorSystem("pants")
     val dispatcher = actorSystem.actorOf(Props[Dispatcher], "dispatcher")
-    val authenticator = actorSystem.actorOf(Props[Authenticator], "authenticator")
+    val authenticator = actorSystem.actorOf(Props[UserRegistry], "userRegistry")
 
     val b: ServerBootstrap = new ServerBootstrap()
     b.childOption(ChannelOption.ALLOCATOR,PooledByteBufAllocator.DEFAULT)

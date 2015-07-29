@@ -6,7 +6,7 @@ import io.netty.channel.{ChannelInitializer, ChannelPipeline}
 import io.netty.handler.codec.protobuf.{ProtobufDecoder, ProtobufEncoder, ProtobufVarint32FrameDecoder, ProtobufVarint32LengthFieldPrepender}
 import io.netty.handler.ssl.SslContext
 import org.kndl.pants.PantsProtocol
-import org.kndl.pants.akka.PantsClient
+import org.kndl.pants.akka.ClientProxy
 
 /**
  *
@@ -31,7 +31,7 @@ class ServerInitializer(ctx: SslContext, system: ActorSystem) extends ChannelIni
 
     // object
 
-    val client = system.actorOf(Props[PantsClient])
+    val client = system.actorOf(Props[ClientProxy])
     val handler: ServerHandler = new ServerHandler(client)
     pipeline.addLast(handler)
 

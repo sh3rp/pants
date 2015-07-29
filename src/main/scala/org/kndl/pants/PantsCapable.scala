@@ -61,6 +61,19 @@ trait PantsCapable {
       .build()
   }
 
+  def newPrivateMessage(userId: Long, toUserId: Long, msg: String): Pants = {
+    newPants(Pants.Type.PRIVMSG)
+      .setUserId(userId)
+      .setToUserId(toUserId)
+      .setMessage(msg)
+      .build()
+  }
+
+  def newError(msg: String): Pants = {
+    newPants(Pants.Type.ERROR)
+      .setMessage(msg)
+  }
+
   def newPants(packetType: Pants.Type): Pants.Builder = {
     Pants.newBuilder()
       .setType(packetType)

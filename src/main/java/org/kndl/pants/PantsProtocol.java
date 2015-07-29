@@ -141,6 +141,15 @@ public final class PantsProtocol {
     long getTimestamp();
 
     /**
+     * <code>optional int64 toUserId = 13;</code>
+     */
+    boolean hasToUserId();
+    /**
+     * <code>optional int64 toUserId = 13;</code>
+     */
+    long getToUserId();
+
+    /**
      * <code>optional bytes data = 254;</code>
      */
     boolean hasData();
@@ -271,8 +280,13 @@ public final class PantsProtocol {
               timestamp_ = input.readInt64();
               break;
             }
-            case 2034: {
+            case 104: {
               bitField0_ |= 0x00001000;
+              toUserId_ = input.readInt64();
+              break;
+            }
+            case 2034: {
+              bitField0_ |= 0x00002000;
               data_ = input.readBytes();
               break;
             }
@@ -357,9 +371,13 @@ public final class PantsProtocol {
        */
       PONG(8, 8),
       /**
+       * <code>ERROR = 253;</code>
+       */
+      ERROR(9, 253),
+      /**
        * <code>CONTROL = 254;</code>
        */
-      CONTROL(9, 254),
+      CONTROL(10, 254),
       ;
 
       /**
@@ -399,6 +417,10 @@ public final class PantsProtocol {
        */
       public static final int PONG_VALUE = 8;
       /**
+       * <code>ERROR = 253;</code>
+       */
+      public static final int ERROR_VALUE = 253;
+      /**
        * <code>CONTROL = 254;</code>
        */
       public static final int CONTROL_VALUE = 254;
@@ -417,6 +439,7 @@ public final class PantsProtocol {
           case 6: return PRIVMSG;
           case 7: return PING;
           case 8: return PONG;
+          case 253: return ERROR;
           case 254: return CONTROL;
           default: return null;
         }
@@ -758,13 +781,28 @@ public final class PantsProtocol {
       return timestamp_;
     }
 
+    public static final int TOUSERID_FIELD_NUMBER = 13;
+    private long toUserId_;
+    /**
+     * <code>optional int64 toUserId = 13;</code>
+     */
+    public boolean hasToUserId() {
+      return ((bitField0_ & 0x00001000) == 0x00001000);
+    }
+    /**
+     * <code>optional int64 toUserId = 13;</code>
+     */
+    public long getToUserId() {
+      return toUserId_;
+    }
+
     public static final int DATA_FIELD_NUMBER = 254;
     private com.google.protobuf.ByteString data_;
     /**
      * <code>optional bytes data = 254;</code>
      */
     public boolean hasData() {
-      return ((bitField0_ & 0x00001000) == 0x00001000);
+      return ((bitField0_ & 0x00002000) == 0x00002000);
     }
     /**
      * <code>optional bytes data = 254;</code>
@@ -786,6 +824,7 @@ public final class PantsProtocol {
       channelName_ = "";
       message_ = "";
       timestamp_ = 0L;
+      toUserId_ = 0L;
       data_ = com.google.protobuf.ByteString.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
@@ -842,6 +881,9 @@ public final class PantsProtocol {
         output.writeInt64(12, timestamp_);
       }
       if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        output.writeInt64(13, toUserId_);
+      }
+      if (((bitField0_ & 0x00002000) == 0x00002000)) {
         output.writeBytes(254, data_);
       }
       getUnknownFields().writeTo(output);
@@ -902,6 +944,10 @@ public final class PantsProtocol {
           .computeInt64Size(12, timestamp_);
       }
       if (((bitField0_ & 0x00001000) == 0x00001000)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(13, toUserId_);
+      }
+      if (((bitField0_ & 0x00002000) == 0x00002000)) {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(254, data_);
       }
@@ -1046,8 +1092,10 @@ public final class PantsProtocol {
         bitField0_ = (bitField0_ & ~0x00000400);
         timestamp_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000800);
-        data_ = com.google.protobuf.ByteString.EMPTY;
+        toUserId_ = 0L;
         bitField0_ = (bitField0_ & ~0x00001000);
+        data_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00002000);
         return this;
       }
 
@@ -1127,6 +1175,10 @@ public final class PantsProtocol {
         if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
           to_bitField0_ |= 0x00001000;
         }
+        result.toUserId_ = toUserId_;
+        if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
+          to_bitField0_ |= 0x00002000;
+        }
         result.data_ = data_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
@@ -1187,6 +1239,9 @@ public final class PantsProtocol {
         }
         if (other.hasTimestamp()) {
           setTimestamp(other.getTimestamp());
+        }
+        if (other.hasToUserId()) {
+          setToUserId(other.getToUserId());
         }
         if (other.hasData()) {
           setData(other.getData());
@@ -1785,12 +1840,44 @@ public final class PantsProtocol {
         return this;
       }
 
+      private long toUserId_ ;
+      /**
+       * <code>optional int64 toUserId = 13;</code>
+       */
+      public boolean hasToUserId() {
+        return ((bitField0_ & 0x00001000) == 0x00001000);
+      }
+      /**
+       * <code>optional int64 toUserId = 13;</code>
+       */
+      public long getToUserId() {
+        return toUserId_;
+      }
+      /**
+       * <code>optional int64 toUserId = 13;</code>
+       */
+      public Builder setToUserId(long value) {
+        bitField0_ |= 0x00001000;
+        toUserId_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional int64 toUserId = 13;</code>
+       */
+      public Builder clearToUserId() {
+        bitField0_ = (bitField0_ & ~0x00001000);
+        toUserId_ = 0L;
+        onChanged();
+        return this;
+      }
+
       private com.google.protobuf.ByteString data_ = com.google.protobuf.ByteString.EMPTY;
       /**
        * <code>optional bytes data = 254;</code>
        */
       public boolean hasData() {
-        return ((bitField0_ & 0x00001000) == 0x00001000);
+        return ((bitField0_ & 0x00002000) == 0x00002000);
       }
       /**
        * <code>optional bytes data = 254;</code>
@@ -1805,7 +1892,7 @@ public final class PantsProtocol {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00001000;
+  bitField0_ |= 0x00002000;
         data_ = value;
         onChanged();
         return this;
@@ -1814,7 +1901,7 @@ public final class PantsProtocol {
        * <code>optional bytes data = 254;</code>
        */
       public Builder clearData() {
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00002000);
         data_ = getDefaultInstance().getData();
         onChanged();
         return this;
@@ -1846,18 +1933,19 @@ public final class PantsProtocol {
   static {
     java.lang.String[] descriptorData = {
       "\n%src/main/protobuf/PantsProtocol.proto\022" +
-      "\016org.kndl.pants\"\256\003\n\005Pants\022(\n\004type\030\001 \002(\0162" +
+      "\016org.kndl.pants\"\314\003\n\005Pants\022(\n\004type\030\001 \002(\0162" +
       "\032.org.kndl.pants.Pants.Type\022\020\n\010username\030" +
       "\002 \001(\t\022\020\n\010password\030\003 \001(\t\022\020\n\010loggedIn\030\004 \001(" +
       "\010\022\016\n\006userId\030\005 \001(\003\022\024\n\014versionMajor\030\006 \001(\005\022" +
       "\024\n\014versionMinor\030\007 \001(\005\022\024\n\014versionPatch\030\010 " +
       "\001(\005\022\021\n\tchannelId\030\t \001(\003\022\023\n\013channelName\030\n " +
       "\001(\t\022\017\n\007message\030\013 \001(\t\022\021\n\ttimestamp\030\014 \001(\003\022" +
-      "\r\n\004data\030\376\001 \001(\014\"\227\001\n\004Type\022\021\n\rLOGIN_REQUEST" +
-      "\020\000\022\022\n\016LOGIN_RESPONSE\020\001\022\013\n\007VERSION\020\002\022\020\n\014J",
-      "OIN_REQUEST\020\003\022\021\n\rJOIN_RESPONSE\020\004\022\007\n\003MSG\020" +
-      "\005\022\013\n\007PRIVMSG\020\006\022\010\n\004PING\020\007\022\010\n\004PONG\020\010\022\014\n\007CO" +
-      "NTROL\020\376\001B\020\n\016org.kndl.pants"
+      "\020\n\010toUserId\030\r \001(\003\022\r\n\004data\030\376\001 \001(\014\"\243\001\n\004Typ" +
+      "e\022\021\n\rLOGIN_REQUEST\020\000\022\022\n\016LOGIN_RESPONSE\020\001",
+      "\022\013\n\007VERSION\020\002\022\020\n\014JOIN_REQUEST\020\003\022\021\n\rJOIN_" +
+      "RESPONSE\020\004\022\007\n\003MSG\020\005\022\013\n\007PRIVMSG\020\006\022\010\n\004PING" +
+      "\020\007\022\010\n\004PONG\020\010\022\n\n\005ERROR\020\375\001\022\014\n\007CONTROL\020\376\001B\020" +
+      "\n\016org.kndl.pants"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1876,7 +1964,7 @@ public final class PantsProtocol {
     internal_static_org_kndl_pants_Pants_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_kndl_pants_Pants_descriptor,
-        new java.lang.String[] { "Type", "Username", "Password", "LoggedIn", "UserId", "VersionMajor", "VersionMinor", "VersionPatch", "ChannelId", "ChannelName", "Message", "Timestamp", "Data", });
+        new java.lang.String[] { "Type", "Username", "Password", "LoggedIn", "UserId", "VersionMajor", "VersionMinor", "VersionPatch", "ChannelId", "ChannelName", "Message", "Timestamp", "ToUserId", "Data", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

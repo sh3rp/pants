@@ -7,12 +7,12 @@ import org.kndl.pants.PantsProtocol.Pants
 import org.kndl.pants.auth.{AUTHORIZE_RESPONSE, AUTHORIZE}
 import org.slf4j.{LoggerFactory, Logger}
 
-class PantsClient extends Actor with PantsCapable {
+class ClientProxy extends Actor with PantsCapable {
 
-  private val logger: Logger = LoggerFactory.getLogger(classOf[PantsClient])
+  private val logger: Logger = LoggerFactory.getLogger(classOf[ClientProxy])
 
   val dispatcher: ActorSelection = context.actorSelection("../dispatcher")
-  val authenticator: ActorSelection = context.actorSelection("../authenticator")
+  val userRegistry: ActorSelection = context.actorSelection("../userRegistry")
 
   var handlerContext: ChannelHandlerContext = _
 
@@ -26,7 +26,9 @@ class PantsClient extends Actor with PantsCapable {
     case in: IN =>
       in.msg.getType match {
         case Pants.Type.LOGIN_REQUEST =>
-          authenticator ! AUTHORIZE(in.msg.getUsername(),in.msg.getPassword)
+          userRegistry ! AUTHORIZE(in.msg.getUsername(),in.msg.getPassword)
+        case Pants.Type.PRIVMSG =>
+          userRegistry !
         case _ =>
           dispatcher ! in
       }
