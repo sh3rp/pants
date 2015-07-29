@@ -21,6 +21,10 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] with PantsCapable
   var channelsNameToId: Map[String,Long] = Map()
   var channelsIdToName: Map[Long,String] = Map()
 
+  def loggedIn:Boolean = userId != 0
+
+  def channelJoined(channelName: String): Boolean = channelsNameToId.contains(channelName)
+
   def sendLogin(username: String, password: String) = {
     this.username = username
     ctx.writeAndFlush(newLoginRequest(username,password))
@@ -68,9 +72,10 @@ class ClientHandler extends SimpleChannelInboundHandler[Pants] with PantsCapable
           case 0 =>
             LOGGER.info("Joining channel {} failed",msg.getChannelName)
           case chanId: Long =>
-            LOGGER.info("Channel {} registered to id {}",msg.getChannelName,msg.getChannelId)
+            LOGGER.info("This Channel {} registered to id {}",msg.getChannelName,msg.getChannelId)
             channelsNameToId = channelsNameToId ++ Map(msg.getChannelName -> chanId)
             channelsIdToName = channelsIdToName ++ Map(chanId -> msg.getChannelName)
+            LOGGER.info("Channels = {}",channelsNameToId)
         }
       case _ =>
     }

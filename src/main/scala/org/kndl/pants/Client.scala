@@ -33,7 +33,7 @@ object Client extends App {
     }
     Thread.sleep(3000)
     handler.sendJoinRequest("test")
-    Thread.sleep(5000)
+    while(!handler.channelJoined("test"))
     handler.sendMsg("test","Hello!")
     Thread.sleep(1000)
     handler.sendMsg("test","Good morning!")
