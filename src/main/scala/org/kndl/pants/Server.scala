@@ -2,6 +2,7 @@ package org.kndl.pants
 
 import _root_.akka.actor.{ActorSystem, Props}
 import io.netty.bootstrap.ServerBootstrap
+import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel._
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
@@ -9,6 +10,7 @@ import io.netty.handler.logging.{LogLevel, LoggingHandler}
 import io.netty.handler.ssl.util.SelfSignedCertificate
 import io.netty.handler.ssl.{SslContext, SslContextBuilder}
 import org.kndl.pants.akka.Dispatcher
+import org.kndl.pants.auth.Authenticator
 import org.kndl.pants.netty.server.ServerInitializer
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -31,8 +33,10 @@ object Server extends App {
 
     val actorSystem = ActorSystem("pants")
     val dispatcher = actorSystem.actorOf(Props[Dispatcher], "dispatcher")
+    val authenticator = actorSystem.actorOf(Props[Authenticator], "authenticator")
 
     val b: ServerBootstrap = new ServerBootstrap()
+    b.childOption(ChannelOption.ALLOCATOR,PooledByteBufAllocator.DEFAULT)
     b.group(bossGroup, workerGroup)
       .channel(classOf[NioServerSocketChannel])
       .handler(new LoggingHandler(LogLevel.INFO))

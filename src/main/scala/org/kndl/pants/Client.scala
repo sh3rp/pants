@@ -1,6 +1,7 @@
 package org.kndl.pants
 
 import io.netty.bootstrap.Bootstrap
+import io.netty.buffer.PooledByteBufAllocator
 import io.netty.channel._
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioSocketChannel
@@ -21,6 +22,7 @@ object Client extends App {
   val group: EventLoopGroup = new NioEventLoopGroup()
   try {
     val b: Bootstrap = new Bootstrap()
+    //b.option(ChannelOption.ALLOCATOR,PooledByteBufAllocator.DEFAULT)
     b.group(group).channel(classOf[NioSocketChannel]).handler(new ClientInitializer(ctx))
     val ch: Channel = b.connect(HOST, PORT).sync().channel()
     val handler: ClientHandler = ch.pipeline().get[ClientHandler](classOf[ClientHandler])

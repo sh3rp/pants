@@ -1,18 +1,29 @@
 package org.kndl.pants.akka
 
+import java.util.concurrent
+import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ActorSelection, Actor, ActorRef}
+import akka.util.Timeout
 import com.google.protobuf.ByteString
 import org.kndl.pants.PantsProtocol._
+import org.kndl.pants.auth.{ISAUTHORIZED_RESPONSE, ISAUTHORIZED}
 import org.kndl.pants.{PantsCapable, PantsProtocol, Server}
 import org.slf4j.{Logger, LoggerFactory}
 import scala.collection.immutable.Map
+import akka.pattern.ask
+
+import scala.concurrent.Await
 
 
 class Dispatcher extends Actor with PantsCapable {
 
+  implicit val timeout = Timeout(5, TimeUnit.SECONDS)
+
   val LOGGER: Logger = LoggerFactory.getLogger(classOf[Dispatcher])
+
+  val authenticator: ActorSelection = context.actorSelection("../authenticator")
 
   var clients: Map[Long,ActorRef] = Map()
 
@@ -36,30 +47,25 @@ class Dispatcher extends Actor with PantsCapable {
   }
 
   def handlePacket(sender: ActorRef, msg: Pants) = {
-    msg.getType match {
-      case Pants.Type.LOGIN_REQUEST =>
-        handleLogin(sender,msg)
-      case Pants.Type.MSG =>
-        handleMsg(sender,msg)
-      case Pants.Type.PRIVMSG =>
-      case Pants.Type.JOIN_REQUEST =>
-        handleJoin(sender,msg)
+    isAuthorized(msg.getUserId) match {
+      case true =>
+        msg.getType match {
+          case Pants.Type.MSG =>
+            handleMsg(sender, msg)
+          case Pants.Type.PRIVMSG =>
+          case Pants.Type.JOIN_REQUEST =>
+            handleJoin(sender, msg)
+          case _ =>
+        }
       case _ =>
+        sender ! OUT(newLoginResponse(msg.getUserId,false))
     }
   }
 
-  def handleLogin(sender: ActorRef, login: Pants) = {
-    login.getPassword match {
-      case "password" =>
-        val newId: Long = newUserId
-        clients = clients ++ Map(newId -> sender)
-        names = names ++ Map(newId -> login.getUsername)
-        LOGGER.info("Password accepted for {} ({})", login.getUsername, newId)
-        sender ! OUT(newLoginResponse(newId,true))
-      case _ =>
-        LOGGER.info("Password failed for {}", login.getUsername)
-        sender ! OUT(newLoginResponse(0,false))
-    }
+  def isAuthorized(userId: Long): Boolean = {
+    val future = authenticator ? ISAUTHORIZED(username = "",userId)
+    val result = Await.result(future, timeout.duration).asInstanceOf[ISAUTHORIZED_RESPONSE]
+    result.authorized
   }
 
   def handleMsg(sender: ActorRef, msg: Pants) = {
